@@ -1,0 +1,6 @@
+$scope.startGame = function () {
+	var colorList = ["red","green","yellow","pink","tan"];
+	
+		
+
+}

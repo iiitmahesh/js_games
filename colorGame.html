@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en-US"  >
+<head >
+<meta charset="UTF-8">
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js"></script> 
+<script>
+var app = angular.module('colorGame', []);
+app.controller('myCtrl', function($scope, $timeout) {
+
+ 	var colorsObj = [
+    {"colorName":"Navy Blue", "colorValue":"#000080"},
+    {"colorName":"Purple", "colorValue":"#8C0095"},
+    {"colorName":"Indigo", "colorValue":"#5133AB"},
+    {"colorName":"Red", "colorValue":"#FF4500"},
+    {"colorName":"Oragne", "colorValue":"#D24726"},
+    {"colorName":"Green", "colorValue":"#00A600"},
+    {"colorName":"Sky Blue ", "colorValue":"#00BFFF"},
+    {"colorName":"Light Pink", "colorValue":"#FF69B4"},
+    {"colorName":"Deep Pink", "colorValue":"#FF1493"},
+    {"colorName":"Black", "colorValue":"#000000"},
+    {"colorName":"Yellow", "colorValue":"#FFD700"}
+    ];
+    
+	//var colors= ["Purple","Green","Red","SkyBlue","Yellow","Violet","Black","HotPink","Grey","Silver","Indigo","Brown","Gold","OrangeRed"];
+   var shuffledColors;
+   var outputColors = [];
+   var score,timeLimit,colorCount;
+   display = document.querySelector('#time');
+   display1 = document.querySelector('#gamebody');
+    
+    $scope.startGame = function () {
+    	 display1.style.display = "block";
+    	 $scope.showGame = false;
+    	 score = 0;
+    	 timeLimit = 30;
+    	 colorCount = 4;
+    	 $scope.getGameBoard(0);
+    	 startTimer(timeLimit, display);
+    }
+    $scope.stopGame = function () {
+    	console.log("stopping game");
+    	display1.style.display = "none";
+    	$scope.showGame = true;
+    }
+    
+   $scope.getGameBoard = function (x) {
+   	score = score+parseInt(x);
+   	outputColors = [];
+   	shuffledColors = colorsObj.sort(randOrd);
+   	var rand = Math.floor((Math.random() * 4) + 0);
+   	//console.log(rand)
+   	for (var i=0;i<colorCount;i++) {
+   		if (rand != i) {
+   			temp = {"name":shuffledColors[i].colorName, "value":shuffledColors[i].colorValue, "score": 0}	;
+   		}
+   		else {
+   			temp = {"name":shuffledColors[i].colorName, "value":shuffledColors[rand+4].colorValue, "score": 1}	
+   		}
+   		outputColors.push(temp);
+  		}
+   	//console.log(JSON.stringify(outputColors));
+   	$scope.score = score;
+   	$scope.colors = outputColors;	
+   	}
+   	
+   	
+	function randOrd(){
+  		return (Math.round(Math.random())-0.5);
+	}
+	// Timer Code start from here
+	function startTimer(duration, display) {
+    var timer = duration, minutes, seconds;
+     var myVar = setInterval(function () {
+        minutes = parseInt(timer / 60, 10)
+        seconds = parseInt(timer % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.textContent = minutes + ":" + seconds;
+
+        if (--timer < 0) {
+            //timer = duration;
+            //console.log("time up");
+           	$scope.stopGame();
+            clearInterval(myVar);
+        }
+    }, 1000);
+}
+	
+            
+});
+
+
+</script>
+<title>Color Game</title>
+<style type="text/css">
+.btn{
+    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2) !important;
+    border-radius: 0px !important;
+    margin: 10px;
+    padding: 20px !important;
+    font-size: 16px;
+    display: block;
+    !width: 100%;  
+}
+.btn-default{
+	background-color: #fff;
+}
+</style>
+</head>
+
+<body ng-app="colorGame"	ng-controller="myCtrl" >
+<div  class="container">
+	<p class="btn btn-block btn-default" ng-click="startGame()">Start </p>
+	
+		<table summary="" class="table" >
+		<tr><td>Score: {{score}}</td> <td> Time : <span id="time"></span></td></tr>
+		</table>
+		<br>
+		
+		<div id="gamebody">
+		<table summary="" class="table" ng-hide="showGame" >
+		<tr ng-repeat="x in colors"><td class="btn btn-block btn-lg btn-default" ng-click="getGameBoard(x.score)" style="color:#fff;background-color: {{x.value}};">{{x.name}} </td></tr>
+		</table>
+ 	</div>
+ 	
+</div>
+</body>
+
+</html>
